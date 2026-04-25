@@ -4,14 +4,15 @@
 ![WM](https://img.shields.io/badge/WM-Hyprland-blue)
 ![Arch](https://img.shields.io/badge/Distro-Arch_Linux-blue)
 
-A robust shell script designed for 2-in-1 laptops (convertibles) running **Hyprland** on Arch Linux. It handles the simultaneous rotation of the display and the corresponding input transformation matrices for touchscreens and styluses (Wacom/ELAN).
+A robust shell script designed for 2-in-1 laptops (convertibles) running **Hyprland** on Arch Linux. It handles the simultaneous rotation of the display and the corresponding input transformations for touchscreens, styluses, and trackpads.
 
 ## ✨ Features
 
 - **Toggle Rotation**: Easily switch between normal (0°) and flipped (180°) orientations.
-- **Input Sync**: Automatically applies the correct `input_transform` matrix to touchscreen and pen devices, preventing inverted or "mirrored" input while the screen is rotated.
+- **Auto-Detection**: Automatically identifies Wacom and ELAN input devices (touchscreen, pen, and trackpad).
+- **Input Sync**: Applies the correct transformation to all input devices, ensuring that "up" is always "up" on the screen, even for the mouse/trackpad.
+- **Improved Stability**: Uses a temporary configuration source to apply settings reliably across all Hyprland versions.
 - **Hyprland Native**: Uses `hyprctl` for real-time configuration without needing to restart the session.
-- **Hardware Support**: Tested with Wacom and ELAN digitizers.
 
 ## 🛠️ Requirements
 
@@ -21,17 +22,10 @@ A robust shell script designed for 2-in-1 laptops (convertibles) running **Hyprl
 
 ## ⚙️ Configuration
 
-Before running, you must identify and set your hardware names in the script:
+The script is now largely automated. You only need to verify your monitor name:
 
-1.  **Monitor**: Find your monitor name using `hyprctl monitors`. (eDP-1 is the default).
-2.  **Input Devices**: List your devices with `hyprctl devices`. Look for your touchscreen and pen names.
-
-Update these variables in `rotate.sh`:
-```bash
-MONITOR="eDP-1"
-TOUCH_FINGER="your-touchscreen-device-name"
-TOUCH_PEN="your-pen-device-name"
-```
+1.  **Monitor**: Find your monitor name using `hyprctl monitors`. (`eDP-1` is the default).
+2.  If your monitor is not `eDP-1`, update the `MONITOR` variable at the beginning of `rotate.sh`.
 
 ## 🚀 Usage
 
@@ -46,13 +40,10 @@ Run it to toggle orientation:
 ```
 
 ### Keybinding Tip
-Add a bind to your `hyprland.conf` to rotate with a key combo:
+Add a bind to your `hyprland.conf` to rotate with a key combo (e.g., Alt + R):
 ```hyprlang
-bind = $mainMod, R, exec, ~/scripts/rotate.sh
+bind = Alt, R, exec, ~/scripts/rotate.sh
 ```
 
 ## 📊 Technical Details
-The script uses the following transformation matrix for 180° rotation to ensure input alignment:
-`MATRIX_180_FLIP="-1 0 1 0 -1 1"`
-This matrix handles both the inversion and the necessary coordinate offset.
-```
+The script generates a temporary configuration in `/tmp/hypr_rotate.conf` which is then sourced by Hyprland. This ensures that even devices with special characters in their names (like `:` in ELAN devices) are correctly configured with the appropriate `transform` and `output` mapping.
