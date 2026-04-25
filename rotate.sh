@@ -23,7 +23,7 @@ else
 fi
 
 # 1. Aplicăm rotația la monitor
-hyprctl keyword monitor "$MONITOR, transform, $NEW_MON"
+hyprctl keyword monitor "$MONITOR, preferred, auto, 1, transform, $NEW_MON"
 
 # 2. Generăm configurarea pentru dispozitive
 # Folosim blocul 'device {}' pentru a evita problemele cu numele dispozitivelor
